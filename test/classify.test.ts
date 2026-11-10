@@ -18,11 +18,12 @@ test("military and LADD together", () => {
 });
 
 test("government via database index, case-insensitive hex", () => {
-  const index: GovIndex = new Map([["3c4b2a", { operator: "Bundespolizei", owner: "", reason: "r" }]]);
+  const index: GovIndex = new Map([["3c4b2a", { operator: "Bundespolizei", owner: "", country: "Germany", reason: "r" }]]);
   const c = classify({ hex: "3C4B2A" }, index);
   assert.deepEqual(c?.categories, ["gov"]);
   assert.equal(c?.govReason, "r");
   assert.equal(c?.operator, "Bundespolizei");
+  assert.equal(c?.country, "Germany");
 });
 
 test("government via state callsign", () => {

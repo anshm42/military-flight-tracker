@@ -11,6 +11,7 @@ const FLAG_LADD = 8;
 export interface GovInfo {
   operator: string;
   owner: string;
+  country: string;
   reason: string;
 }
 
@@ -22,6 +23,7 @@ export interface Classification {
   /** Why the aircraft counts as government, when it does. */
   govReason?: string;
   operator?: string;
+  country?: string;
 }
 
 /** Returns the tracked categories an aircraft belongs to, or null if it is not tracked. */
@@ -36,5 +38,10 @@ export function classify(ac: AdsbAircraft, govIndex: GovIndex): Classification |
 
   if (flags & FLAG_LADD) categories.push("ladd");
   if (categories.length === 0) return null;
-  return { categories, govReason, operator: gov ? gov.operator || gov.owner || undefined : undefined };
+  return {
+    categories,
+    govReason,
+    operator: gov ? gov.operator || gov.owner || undefined : undefined,
+    country: gov?.country || undefined,
+  };
 }
