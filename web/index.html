@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sentinel — military, government &amp; LADD flights</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=Saira+Stencil+One&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="map" aria-label="Aircraft map"></div>
+
+    <aside id="panel">
+      <header class="brand">
+        <h1>Sentinel</h1>
+        <p class="tagline">State &amp; restricted air traffic</p>
+      </header>
+
+      <nav class="modes" role="tablist">
+        <button role="tab" data-mode="live" aria-selected="true">Live</button>
+        <button role="tab" data-mode="history" aria-selected="false">History</button>
+      </nav>
+
+      <fieldset class="cats">
+        <legend>Categories</legend>
+        <label class="cat mil"><input type="checkbox" value="mil" checked /><span class="swatch"></span>Military<b data-count="mil">–</b></label>
+        <label class="cat gov"><input type="checkbox" value="gov" checked /><span class="swatch"></span>Government<b data-count="gov">–</b></label>
+        <label class="cat ladd"><input type="checkbox" value="ladd" checked /><span class="swatch"></span>LADD<b data-count="ladd">–</b></label>
+      </fieldset>
+
+      <form id="history-form" class="history-form" hidden>
+        <label>From <input type="datetime-local" name="from" required /></label>
+        <label>To <input type="datetime-local" name="to" required /></label>
+        <button type="submit">Load window</button>
+      </form>
+
+      <input id="search" type="search" placeholder="Search callsign, reg, hex…" autocomplete="off" aria-label="Search aircraft" />
+
+      <ul id="list" aria-label="Aircraft"></ul>
+
+      <footer id="status" aria-live="polite">Waiting for first sweep…</footer>
+    </aside>
+
+    <section id="detail" hidden aria-live="polite"></section>
+
+    <section id="replay" hidden>
+      <button id="play" type="button" aria-label="Play track">▶</button>
+      <input id="scrub" type="range" min="0" max="0" value="0" aria-label="Track time" />
+      <time id="scrub-time"></time>
+    </section>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
