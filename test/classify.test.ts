@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { classify, type GovIndex } from "../server/classify.ts";
+import { classify, toSightings, type GovIndex } from "../server/classify.ts";
 import { matchGovRecord, matchStateCallsign } from "../server/govRules.ts";
 
 const empty: GovIndex = new Map();
@@ -58,4 +58,26 @@ test("database record exclusions and non-matches", () => {
   assert.equal(matchGovRecord(rec("", "State of the Art Aviation LLC")), null);
   assert.equal(matchGovRecord(rec("Police Credit Union")), null);
   assert.equal(matchGovRecord(rec("Minneapolis Flyers")), null);
+});
+
+test("toSightings keeps tracked aircraft with positions and normalizes fields", () => {
+  const sightings = toSightings(
+    {
+      now: 1_000_000,
+      ac: [
+        { hex: "AE1234", dbFlags: 1, flight: "RCH123  ", lat: 1, lon: 2, alt_baro: 30000, seen_pos: 2.5 },
+        { hex: "ae9999", dbFlags: 1 }, // no position
+        { hex: "a11111", lat: 1, lon: 2 }, // civil
+        { hex: "a00001", dbFlags: 8, lat: 3, lon: 4, alt_baro: "ground" },
+      ],
+    },
+    empty,
+  );
+  assert.equal(sightings.length, 2);
+  assert.deepEqual(
+    { hex: sightings[0].hex, ts: sightings[0].ts, callsign: sightings[0].callsign, alt: sightings[0].alt },
+    { hex: "ae1234", ts: 997_500, callsign: "RCH123", alt: 30000 },
+  );
+  assert.equal(sightings[1].onGround, true);
+  assert.equal(sightings[1].alt, null);
 });

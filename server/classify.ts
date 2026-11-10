@@ -1,4 +1,4 @@
-import type { AdsbAircraft } from "./adsb.ts";
+import type { AdsbAircraft, AdsbSnapshot } from "./adsb.ts";
 import { matchStateCallsign } from "./govRules.ts";
 
 export type Category = "mil" | "gov" | "ladd";
@@ -44,4 +44,48 @@ export function classify(ac: AdsbAircraft, govIndex: GovIndex): Classification |
     operator: gov ? gov.operator || gov.owner || undefined : undefined,
     country: gov?.country || undefined,
   };
+}
+
+/** One observation of a tracked aircraft: position plus classification. */
+export interface Sighting extends Classification {
+  hex: string;
+  /** Time of the position, epoch ms. */
+  ts: number;
+  callsign?: string;
+  reg?: string;
+  type?: string;
+  lat: number;
+  lon: number;
+  /** Barometric altitude in feet; null when unknown or on the ground. */
+  alt: number | null;
+  onGround: boolean;
+  gs?: number;
+  track?: number;
+  squawk?: string;
+}
+
+/** Classifies a snapshot, keeping tracked aircraft that have a position. */
+export function toSightings(snapshot: AdsbSnapshot, govIndex: GovIndex): Sighting[] {
+  const out: Sighting[] = [];
+  for (const ac of snapshot.ac) {
+    if (typeof ac.lat !== "number" || typeof ac.lon !== "number") continue;
+    const cls = classify(ac, govIndex);
+    if (!cls) continue;
+    out.push({
+      ...cls,
+      hex: ac.hex.toLowerCase(),
+      ts: Math.round(snapshot.now - (ac.seen_pos ?? 0) * 1000),
+      callsign: ac.flight?.trim() || undefined,
+      reg: ac.r || undefined,
+      type: ac.t || undefined,
+      lat: ac.lat,
+      lon: ac.lon,
+      alt: typeof ac.alt_baro === "number" ? ac.alt_baro : null,
+      onGround: ac.alt_baro === "ground",
+      gs: ac.gs,
+      track: ac.track,
+      squawk: ac.squawk,
+    });
+  }
+  return out;
 }
