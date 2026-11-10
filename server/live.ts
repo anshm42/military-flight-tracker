@@ -36,6 +36,10 @@ export class LiveState {
     this.lastUpdate = now;
   }
 
+  get(hex: string): LiveAircraft | null {
+    return this.aircraft.get(hex) ?? null;
+  }
+
   /** Aircraft in any of the given categories. */
   list(categories: readonly Category[]): LiveAircraft[] {
     return [...this.aircraft.values()].filter((ac) => ac.categories.some((c) => categories.includes(c)));
