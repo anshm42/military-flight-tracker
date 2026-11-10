@@ -80,20 +80,21 @@ SQLite file `data/tracker.sqlite`, via Node's built-in `node:sqlite`.
 ```sql
 aircraft(
   hex TEXT PRIMARY KEY,
-  reg TEXT, type TEXT, last_callsign TEXT,
+  reg TEXT, type TEXT, callsign TEXT,
   categories TEXT,       -- comma-separated: mil,gov,ladd
-  gov_reason TEXT,
+  gov_reason TEXT, operator TEXT, country TEXT,
   first_seen INTEGER,    -- epoch ms
-  last_seen INTEGER
+  last_seen INTEGER,
+  last_pos_ts INTEGER    -- ts of last stored position
 )
 positions(
   hex TEXT, ts INTEGER, lat REAL, lon REAL, alt INTEGER, gs REAL, track REAL
 )
--- indexes: positions(hex, ts), positions(ts)
+-- indexes: positions(hex, ts), positions(ts), aircraft(last_seen)
 ```
 
 - Each poll writes in one transaction: upsert `aircraft`, insert `positions`.
-- At most one stored position per aircraft per minute (a position is also skipped if identical to the previous one stored for that hex). Keeps write volume low, including for a future Cloudflare Workers/D1 port.
+- At most one stored position per aircraft per minute (tracked via `aircraft.last_pos_ts`, so it survives restarts). Keeps write volume low, including for a future Cloudflare Workers/D1 port.
 - Rows older than 30 days are pruned hourly.
 
 ## HTTP API
