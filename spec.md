@@ -127,7 +127,7 @@ Leaflet map with OpenStreetMap tiles.
 
 ## Stack
 
-- Node 24 + TypeScript; server run with `tsx`.
+- Node 24 + TypeScript, run directly by Node's built-in type stripping (no build step for the server); `tsc` for type checking only.
 - Server: `node:http`, `node:sqlite`, `csv-parse`.
 - Frontend: Vite + Leaflet.
 - Tests: `node:test`.
