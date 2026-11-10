@@ -93,7 +93,7 @@ positions(
 ```
 
 - Each poll writes in one transaction: upsert `aircraft`, insert `positions`.
-- A position is skipped if identical to the previous one stored for that hex.
+- At most one stored position per aircraft per minute (a position is also skipped if identical to the previous one stored for that hex). Keeps write volume low, including for a future Cloudflare Workers/D1 port.
 - Rows older than 30 days are pruned hourly.
 
 ## HTTP API
@@ -141,6 +141,8 @@ Leaflet map with OpenStreetMap tiles.
 4. In the browser: markers render, filters toggle, details panel opens, history track replays.
 
 ## Non-goals
+
+- Cloudflare Workers hosting (planned later; current target is a single Node process).
 
 - PIA aircraft, user accounts, alerts/notifications.
 - Own ADS-B receiver input.
