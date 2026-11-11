@@ -45,7 +45,7 @@ body::after {
   font: 600 15px var(--label); letter-spacing: 0.2em; text-transform: uppercase;
 }
 .modes button[aria-selected="true"] { background: var(--text); color: var(--bg); }
-.modes button:focus-visible, .history-form button:focus-visible, #play:focus-visible { outline: 2px solid var(--ladd); outline-offset: 2px; }
+.modes button:focus-visible, .history-form button:focus-visible, #play:focus-visible, #detail .close:focus-visible, #detail a:focus-visible { outline: 2px solid var(--ladd); outline-offset: 2px; }
 
 .cats { margin: 0; padding: 0; border: 0; display: grid; gap: 4px; }
 .cats legend { padding: 0 0 6px; color: var(--muted); font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; }
@@ -84,6 +84,7 @@ body::after {
   border-bottom: 1px solid rgba(35, 48, 41, 0.6); animation: fade-in 0.3s ease-out both;
 }
 #list li:hover, #list li[aria-selected="true"] { background: rgba(255, 255, 255, 0.05); }
+#list li:focus-visible { outline: 1px solid var(--text); outline-offset: -1px; }
 #list li[aria-selected="true"] .call { text-decoration: underline; text-underline-offset: 3px; }
 #list .bar { grid-row: span 2; }
 #list .call { font: 500 15px var(--mono); }
@@ -92,7 +93,7 @@ body::after {
 #list .more { cursor: default; color: var(--muted); font-size: 14px; letter-spacing: 0.1em; display: block; text-align: center; }
 .bar.mil { background: var(--mil); } .bar.gov { background: var(--gov); } .bar.ladd { background: var(--ladd); }
 
-#status { color: var(--muted); font: 12px var(--mono); letter-spacing: 0.04em; border-top: 1px solid var(--line); padding-top: 8px; }
+#status { cursor: help; color: var(--muted); font: 12px var(--mono); letter-spacing: 0.04em; border-top: 1px solid var(--line); padding-top: 8px; }
 #status .pulse { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--gov); animation: pulse 2s infinite; }
 #status.stale .pulse { background: var(--mil); animation: none; }
 
@@ -123,6 +124,14 @@ body::after {
 #scrub { flex: 1; accent-color: var(--ladd); }
 #scrub-time { font: 13px var(--mono); color: var(--muted); white-space: nowrap; }
 
+/* Staggered entrance of panel sections. */
+#panel > * { animation: fade-up 0.45s ease-out both; }
+#panel > :nth-child(2) { animation-delay: 0.06s; }
+#panel > :nth-child(3) { animation-delay: 0.12s; }
+#panel > :nth-child(4) { animation-delay: 0.18s; }
+#panel > :nth-child(5) { animation-delay: 0.24s; }
+#panel > :nth-child(n + 6) { animation-delay: 0.3s; }
+
 /* Map markers */
 .plane { color: var(--text); }
 .plane div { width: 100%; height: 100%; transition: transform 0.6s ease; }
@@ -133,6 +142,11 @@ body::after {
   content: ""; position: absolute; inset: -9px; border: 1px solid currentColor; border-radius: 50%; animation: ping 1.6s ease-out infinite;
 }
 
+.leaflet-tooltip.plane-tip {
+  padding: 2px 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 0; box-shadow: none;
+  color: var(--text); font: 500 12px var(--mono); letter-spacing: 0.04em;
+}
+.leaflet-tooltip.plane-tip::before { display: none; }
 .basemap { filter: invert(1) hue-rotate(180deg) grayscale(0.85) brightness(0.55) contrast(1.15); }
 .leaflet-container { font-family: var(--label); background: var(--bg); }
 .leaflet-control-attribution { background: rgba(9, 12, 10, 0.8) !important; color: var(--muted); font: 11px var(--mono); }
@@ -142,6 +156,7 @@ body::after {
 @keyframes slide-in { from { opacity: 0; transform: translateX(-12px); } }
 @keyframes slide-in-right { from { opacity: 0; transform: translateX(12px); } }
 @keyframes fade-in { from { opacity: 0; } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(6px); } }
 @keyframes pulse { 50% { opacity: 0.25; } }
 @keyframes ping { from { transform: scale(0.6); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
 

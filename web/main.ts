@@ -99,14 +99,16 @@ function planeIcon(cats: Category[], track: number | undefined, selected: boolea
   });
 }
 
-function placeMarker(hex: string, latlng: L.LatLngExpression, cats: Category[], track?: number): void {
+function placeMarker(hex: string, latlng: L.LatLngExpression, cats: Category[], name: string, track?: number): void {
   const icon = planeIcon(cats, track, hex === state.selected);
   const existing = markers.get(hex);
   if (existing) {
-    existing.setLatLng(latlng).setIcon(icon);
+    existing.setLatLng(latlng).setIcon(icon).setTooltipContent(escapeHtml(name));
     return;
   }
-  const m = L.marker(latlng, { icon, keyboard: false }).on("click", () => select(hex));
+  const m = L.marker(latlng, { icon, keyboard: false })
+    .bindTooltip(escapeHtml(name), { direction: "top", offset: [0, -12], className: "plane-tip" })
+    .on("click", () => select(hex));
   markers.set(hex, m.addTo(planeLayer));
 }
 
@@ -126,12 +128,16 @@ function renderCounts(items: ListItem[]): void {
 }
 
 function renderList(items: ListItem[]): void {
-  const sorted = [...items].sort((a, b) => label(a).localeCompare(label(b)));
+  // Aircraft broadcasting a callsign first, then those known only by registration or hex.
+  const sorted = [...items].sort(
+    (a, b) => Number(!a.callsign) - Number(!b.callsign) || label(a).localeCompare(label(b)),
+  );
+  const focusedHex = (document.activeElement as HTMLElement | null)?.dataset?.hex;
   const rows = sorted.slice(0, LIST_LIMIT).map((a) => {
     const meta = [a.type, a.reg && a.reg !== a.callsign ? a.reg : null, a.country, a.points ? `${a.points} pts` : null]
       .filter(Boolean)
       .join(" · ");
-    return `<li role="option" data-hex="${escapeHtml(a.hex)}" aria-selected="${a.hex === state.selected}">
+    return `<li role="option" tabindex="0" data-hex="${escapeHtml(a.hex)}" aria-selected="${a.hex === state.selected}">
       <span class="bar ${primary(a.categories)}"></span>
       <span class="call">${escapeHtml(label(a))}</span>
       <span class="alt">${state.mode === "live" ? fmtAlt(a.alt, a.onGround) : ""}</span>
@@ -141,6 +147,7 @@ function renderList(items: ListItem[]): void {
   if (sorted.length > LIST_LIMIT) rows.push(`<li class="more">+${sorted.length - LIST_LIMIT} more — refine search</li>`);
   if (!sorted.length) rows.push(`<li class="more">No aircraft match</li>`);
   listEl.innerHTML = rows.join("");
+  if (focusedHex) listEl.querySelector<HTMLElement>(`li[data-hex="${CSS.escape(focusedHex)}"]`)?.focus();
 }
 
 function renderLive(): void {
@@ -154,7 +161,7 @@ function renderLive(): void {
   }
   trailLayer.clearLayers();
   for (const a of shown) {
-    placeMarker(a.hex, [a.lat, a.lon], a.categories, a.track);
+    placeMarker(a.hex, [a.lat, a.lon], a.categories, label(a), a.track);
     if (a.trail.length > 1) {
       const selected = a.hex === state.selected;
       L.polyline(
@@ -186,7 +193,8 @@ function renderStatus(): void {
   if (!state.liveUpdated) return;
   const age = Math.round((Date.now() - state.liveUpdated) / 1000);
   statusEl.className = age > 90 ? "stale" : "";
-  statusEl.innerHTML = `<span class="pulse"></span>LAST SWEEP ${age}s AGO · ${state.live.length} CONTACTS`;
+  statusEl.innerHTML = `<span class="pulse"></span>DATA ${age}s OLD · ${state.live.length} AIRCRAFT TRACKED`;
+  statusEl.title = "Age of the latest worldwide snapshot from adsb.lol (refreshed every 20 s), and how many tracked aircraft it holds across all categories.";
 }
 
 // ---------- Detail ----------
@@ -236,6 +244,7 @@ async function select(hex: string | null): Promise<void> {
     return;
   }
   render();
+  listEl.querySelector('li[aria-selected="true"]')?.scrollIntoView({ block: "nearest" });
   try {
     const { aircraft, live } = await getJson<{ aircraft: AircraftRecord | null; live: LiveAircraft | null }>(
       `/api/aircraft/${encodeURIComponent(hex)}`,
@@ -252,6 +261,18 @@ async function select(hex: string | null): Promise<void> {
 listEl.addEventListener("click", (e) => {
   const li = (e.target as HTMLElement).closest<HTMLLIElement>("li[data-hex]");
   if (li) select(li.dataset.hex!);
+});
+listEl.addEventListener("keydown", (e) => {
+  const li = (e.target as HTMLElement).closest<HTMLLIElement>("li[data-hex]");
+  if (!li) return;
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    select(li.dataset.hex!);
+  } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault();
+    const next = e.key === "ArrowDown" ? li.nextElementSibling : li.previousElementSibling;
+    (next as HTMLElement | null)?.focus();
+  }
 });
 
 // ---------- Live mode ----------
@@ -327,7 +348,8 @@ async function loadTrack(hex: string): Promise<void> {
 function showTrackPoint(i: number, cats = state.history.find((a) => a.hex === state.selected)?.categories ?? ["mil"]): void {
   const p = state.track[i];
   if (!p || !state.selected) return;
-  placeMarker(state.selected, [p.lat, p.lon], cats, p.track ?? undefined);
+  const record = state.history.find((a) => a.hex === state.selected);
+  placeMarker(state.selected, [p.lat, p.lon], cats, record ? label(record) : state.selected, p.track ?? undefined);
   scrubTimeEl.textContent = `${fmtTime(p.ts)} · ${fmtAlt(p.alt)}`;
 }
 
