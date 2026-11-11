@@ -6,8 +6,8 @@
     "semantic_hash": "ecab5daa8ae4f4166fa8307dd2273b01"
   },
   "server/adsb.ts": {
-    "mtime": 1794352965.6788547,
-    "seen": 1794353153.292535,
+    "mtime": 1794357494.8379714,
+    "seen": 1794357587.06759,
     "ast_hash": "b0aa5e2be7d2ef24b7fb4b798a5b6ba5",
     "semantic_hash": "b0aa5e2be7d2ef24b7fb4b798a5b6ba5"
   },
@@ -66,10 +66,10 @@
     "semantic_hash": "9918a4051db590bde5644c39db5194f4"
   },
   "spec.md": {
-    "mtime": 1794354522.4969046,
-    "seen": 1794354729.908941,
-    "ast_hash": "13dfec7d5f53c70aad236c25c7063dce",
-    "semantic_hash": "13dfec7d5f53c70aad236c25c7063dce"
+    "mtime": 1794357573.7953558,
+    "seen": 1794357587.0676029,
+    "ast_hash": "982edcb17b55b6c069e88f9728a98ea7",
+    "semantic_hash": ""
   },
   "server/aircraftDb.ts": {
     "mtime": 1794353117.8265133,
@@ -90,14 +90,14 @@
     "semantic_hash": "b4cb47d466857773a7ddc648d6442720"
   },
   "server/index.ts": {
-    "mtime": 1794355823.449785,
-    "seen": 1794355880.1471932,
-    "ast_hash": "2232df7c49bb3be4bef38612ecb17db2",
+    "mtime": 1794357494.8428168,
+    "seen": 1794357587.067595,
+    "ast_hash": "dc6d56eb193d716a61beec1985e29088",
     "semantic_hash": ""
   },
   "server/live.ts": {
-    "mtime": 1794354552.2802343,
-    "seen": 1794354729.9089348,
+    "mtime": 1794357494.8388107,
+    "seen": 1794357587.067595,
     "ast_hash": "499225abd99f7e181eb5bce3f5c581fc",
     "semantic_hash": "499225abd99f7e181eb5bce3f5c581fc"
   },
@@ -120,15 +120,15 @@
     "semantic_hash": "582bab87d248f03e05397054bd69f15b"
   },
   "test/live.test.ts": {
-    "mtime": 1794354470.4016342,
-    "seen": 1794354729.908938,
+    "mtime": 1794357494.8392842,
+    "seen": 1794357587.067598,
     "ast_hash": "987e82f7cd232ffadbc9d59d286c222a",
     "semantic_hash": "987e82f7cd232ffadbc9d59d286c222a"
   },
   "web/main.ts": {
-    "mtime": 1794356652.329016,
-    "seen": 1794356665.799562,
-    "ast_hash": "e9f37e9cf450c969e8f7071ee62a39db",
+    "mtime": 1794357518.338653,
+    "seen": 1794357587.0675998,
+    "ast_hash": "09836d397e150894b82565028386d8f3",
     "semantic_hash": ""
   },
   "web/vite-env.d.ts": {
@@ -138,9 +138,9 @@
     "semantic_hash": ""
   },
   "web/index.html": {
-    "mtime": 1794356346.4053192,
-    "seen": 1794356362.0349739,
-    "ast_hash": "2420886773610ee302e8c4207bed8d16",
+    "mtime": 1794357290.4940224,
+    "seen": 1794357587.0676029,
+    "ast_hash": "02f84e5d5b30f38fa36af069ff27b347",
     "semantic_hash": ""
   }
 }

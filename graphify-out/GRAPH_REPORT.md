@@ -1,7 +1,7 @@
 # Graph Report - military-flight-tracker  (2026-11-10)
 
 ## Corpus Check
-- 23 files · ~8,929 words
+- 23 files · ~9,091 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 2 file(s) not represented in the graph (top: (none) 1, .css 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7b3fad76`
+- Built from commit: `ca01fe57`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -82,7 +82,7 @@ Nodes (25): Agent skills configuration, Graphify usage (query graphify-out, /gra
 
 ### Community 5 - "main.ts"
 Cohesion: 0.09
-Nodes (45): canvas, CATEGORY_ORDER, clearMap(), COLORS, detailEl, detailRows(), escapeHtml(), fmtAlt() (+37 more)
+Nodes (45): canvas, CATEGORY_ORDER, clearMap(), COLORS, detailEl, detailSection(), escapeHtml(), fmtAlt() (+37 more)
 
 ### Community 6 - "compilerOptions"
 Cohesion: 0.14
@@ -93,7 +93,7 @@ Cohesion: 0.18
 Nodes (10): EXCLUDE_KEYWORDS, EXCLUDE_RE, GOV_KEYWORDS, GOV_RE, normalize(), OperatorRecord, phraseRegex(), STATE_OPERATORS (+2 more)
 
 ## Knowledge Gaps
-- **18 isolated node(s):** `@types/leaflet`, `@types/node`, `typescript`, `csv-parse`, `FlightAware` (+13 more)
+- **18 isolated node(s):** `@types/leaflet`, `@types/node`, `typescript`, `FlightAware`, `Flightradar24` (+13 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 107 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **1 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
