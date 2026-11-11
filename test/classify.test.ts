@@ -58,6 +58,15 @@ test("database record exclusions and non-matches", () => {
   assert.equal(matchGovRecord(rec("", "State of the Art Aviation LLC")), null);
   assert.equal(matchGovRecord(rec("Police Credit Union")), null);
   assert.equal(matchGovRecord(rec("Minneapolis Flyers")), null);
+  // Registry country suffixes are not the operator.
+  assert.equal(matchGovRecord(rec("American Airlines - United States Of America")), null);
+  assert.equal(matchGovRecord(rec("Korean Air Lines Co. Ltd. - Korea - Republic Of")), null);
+  assert.ok(matchGovRecord(rec("United States - US Immigration and Customs Enforcement")));
+  assert.ok(matchGovRecord(rec("State Of Iowa - Iowa State Patrol")));
+  assert.equal(matchGovRecord(rec("", "Restoration Ministry Inc")), null);
+  assert.equal(matchGovRecord(rec("", "Navion Customs Llc")), null);
+  // Curated operator codes are trusted regardless of name.
+  assert.ok(matchGovRecord(rec("Some Leasing Ltd", "", "RRR")));
 });
 
 test("toSightings keeps tracked aircraft with positions and normalizes fields", () => {

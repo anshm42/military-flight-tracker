@@ -60,6 +60,9 @@ export const GOV_KEYWORDS: string[] = [
 /** Phrases that veto a keyword match (common false positives). */
 export const EXCLUDE_KEYWORDS: string[] = [
   "credit union", "flight school", "flying club", "museum", "republic airways", "state of the art",
+  // Companies: government bodies don't register this way, but churches ("... Ministry Inc"),
+  // car shops ("... Customs Llc") and firms ("United States Steel Corp") would otherwise match.
+  "inc", "llc", "ltd", "corp", "corporation",
 ];
 
 const normalize = (s: string) =>
@@ -67,6 +70,10 @@ const normalize = (s: string) =>
 
 const phraseRegex = (phrases: string[]) =>
   new RegExp(`\\b(${phrases.map(normalize).join("|")})\\b`);
+
+// OpenSky appends the registry country to some names ("United Airlines - Inc. - United States Of America",
+// "Korean Air Lines Co. Ltd. - Korea - Republic Of"); that suffix says nothing about the operator.
+const COUNTRY_SUFFIX = /\s+-\s+(united states of america|[^-]+\s+-\s+republic of)\s*$/i;
 
 const GOV_RE = phraseRegex(GOV_KEYWORDS);
 const EXCLUDE_RE = phraseRegex(EXCLUDE_KEYWORDS);
@@ -82,7 +89,7 @@ export function matchGovRecord(rec: OperatorRecord): string | null {
   const icao = rec.operatorIcao.trim().toUpperCase();
   if (STATE_OPERATORS[icao]) return `operator ${icao}: ${STATE_OPERATORS[icao]}`;
   for (const [field, value] of [["operator", rec.operator], ["owner", rec.owner]] as const) {
-    const text = normalize(value);
+    const text = normalize(value.replace(COUNTRY_SUFFIX, ""));
     if (!text || EXCLUDE_RE.test(text)) continue;
     const hit = GOV_RE.exec(text);
     if (hit) return `${field} "${value.trim()}" matches "${hit[1]}"`;
