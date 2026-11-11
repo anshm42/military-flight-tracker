@@ -5,10 +5,10 @@ import type { Category } from "../server/classify.ts";
 import type { AircraftRecord, Position, SeenAircraft } from "../server/history.ts";
 import type { LiveAircraft } from "../server/live.ts";
 
-const LIVE_REFRESH_MS = 10_000;
+const LIVE_REFRESH_MS = 5_000;
 const LIST_LIMIT = 300;
 const CATEGORY_ORDER: Category[] = ["mil", "gov", "ladd"];
-const COLORS: Record<Category, string> = { mil: "#ff6b3d", gov: "#39dcc0", ladd: "#f2cd4c" };
+const COLORS: Record<Category, string> = { mil: "#ef7550", gov: "#3cbfae", ladd: "#dcb54a" };
 const LABELS: Record<Category, string> = { mil: "Military", gov: "Government", ladd: "LADD" };
 const PLANE_SVG =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l1.6 7.3 7.9 4.3v1.7l-7.9-2.2-.5 5.8 2.7 2v1.3L12 20.6l-3.8 1.1v-1.3l2.7-2-.5-5.8-7.9 2.2v-1.7l7.9-4.3z"/></svg>';
@@ -78,7 +78,7 @@ async function getJson<T>(url: string): Promise<T> {
 
 // ---------- Map ----------
 
-const map = L.map("map", { zoomControl: false, worldCopyJump: true, minZoom: 2 }).setView([35, 0], 3);
+const map = L.map("map", { zoomControl: false, worldCopyJump: true, minZoom: 2 }).setView([38, -40], 3);
 // Standard OSM tiles, darkened in CSS (.basemap) to fit the console theme.
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 18,
@@ -144,13 +144,13 @@ function renderList(items: ListItem[]): void {
       .filter(Boolean)
       .join(" · ");
     return `<li role="option" tabindex="0" data-hex="${escapeHtml(a.hex)}" aria-selected="${a.hex === state.selected}">
-      <span class="bar ${primary(a.categories)}"></span>
+      <span class="dot ${primary(a.categories)}"></span>
       <span class="call">${escapeHtml(label(a))}</span>
       <span class="alt">${state.mode === "live" ? fmtAlt(a.alt, a.onGround) : ""}</span>
       <span class="meta">${escapeHtml(meta || a.hex.toUpperCase())}</span>
     </li>`;
   });
-  if (sorted.length > LIST_LIMIT) rows.push(`<li class="more">+${sorted.length - LIST_LIMIT} more — refine search</li>`);
+  if (sorted.length > LIST_LIMIT) rows.push(`<li class="more">${sorted.length - LIST_LIMIT} more — refine your search</li>`);
   if (!sorted.length) rows.push(`<li class="more">No aircraft match</li>`);
   listEl.innerHTML = rows.join("");
   if (focusedHex) listEl.querySelector<HTMLElement>(`li[data-hex="${CSS.escape(focusedHex)}"]`)?.focus();
@@ -199,17 +199,21 @@ function renderStatus(): void {
   if (!state.liveUpdated) return;
   const age = Math.round((Date.now() - state.liveUpdated) / 1000);
   statusEl.className = age > 90 ? "stale" : "";
-  statusEl.innerHTML = `<span class="pulse"></span>DATA ${age}s OLD · ${state.live.length} AIRCRAFT TRACKED`;
-  statusEl.title = "Age of the latest worldwide snapshot from adsb.lol (refreshed every 20 s), and how many tracked aircraft it holds across all categories.";
+  statusEl.innerHTML = `<span class="live">${age > 90 ? "Delayed" : "Live"}</span>
+    <span>Updated <span class="num">${age}s</span> ago</span><span>·</span>
+    <span><span class="num">${state.live.length}</span> aircraft</span>`;
+  statusEl.title = "Time since the newest position from adsb.lol (the worldwide snapshot refreshes every 10 s), and how many tracked aircraft are visible across all categories.";
 }
 
 // ---------- Detail ----------
 
-function detailRows(rows: [string, unknown][]): string {
-  return rows
+/** A titled group of label/value rows; rows without a value are left out, and so is an empty group. */
+function detailSection(title: string, rows: [string, unknown, "text"?][]): string {
+  const items = rows
     .filter(([, v]) => v !== null && v !== undefined && v !== "")
-    .map(([k, v]) => `<dt>${k}</dt><dd>${escapeHtml(v)}</dd>`)
+    .map(([k, v, kind]) => `<dt>${k}</dt><dd${kind ? ` class="${kind}"` : ""}>${escapeHtml(v)}</dd>`)
     .join("");
+  return items ? `<section><h3>${title}</h3><dl>${items}</dl></section>` : "";
 }
 
 function renderDetail(record: AircraftRecord | null, live: LiveAircraft | null): void {
@@ -219,26 +223,33 @@ function renderDetail(record: AircraftRecord | null, live: LiveAircraft | null):
   const refocusFollow = document.activeElement?.classList.contains("follow");
   detailEl.style.setProperty("--accent", COLORS[primary(cats)]);
   detailEl.innerHTML = `
-    <button class="close" type="button" aria-label="Close details">×</button>
-    <h2>${escapeHtml(a.callsign || a.reg || a.hex.toUpperCase())}</h2>
-    <p class="sub">${escapeHtml([a.type, a.reg].filter(Boolean).join(" · ") || "Unknown type")}</p>
-    <div class="chips">${cats.map((c) => `<span class="chip ${c}">${LABELS[c]}</span>`).join("")}</div>
-    <dl>${detailRows([
-      ["Hex", a.hex.toUpperCase()],
+    <header>
+      <button class="close" type="button" aria-label="Close details">×</button>
+      <h2>${escapeHtml(a.callsign || a.reg || a.hex.toUpperCase())}</h2>
+      <p class="sub">${escapeHtml([a.type, a.reg].filter(Boolean).join(" · ") || "Unknown type")}</p>
+      <div class="tags">${cats.map((c) => `<span class="tag ${c}">${LABELS[c]}</span>`).join("")}</div>
+    </header>
+    ${detailSection("Position", [
       ["Altitude", live ? fmtAlt(live.alt, live.onGround) : null],
-      ["Speed", live?.gs != null ? `${Math.round(live.gs)} kt` : null],
-      ["Heading", live?.track != null ? `${Math.round(live.track)}°` : null],
+      ["Ground speed", live?.gs != null ? `${Math.round(live.gs)} kt` : null],
+      ["Track", live?.track != null ? `${Math.round(live.track)}°` : null],
       ["Squawk", live?.squawk],
-      ["Country", a.country],
-      ["Operator", a.operator],
-      ["Why gov", a.govReason],
+    ])}
+    ${detailSection("Identity", [
+      ["ICAO hex", a.hex.toUpperCase()],
+      ["Registration", a.reg],
+      ["Country", a.country, "text"],
+      ["Operator", a.operator, "text"],
+      ["Listed as gov", a.govReason, "text"],
+    ])}
+    ${detailSection("History", [
       ["First seen", record ? fmtTime(record.firstSeen) : null],
       ["Last seen", record ? fmtTime(record.lastSeen) : null],
-    ])}</dl>
-    <p class="links">
+    ])}
+    <div class="actions">
       ${live ? `<button class="follow" type="button" aria-pressed="${state.follow}">${state.follow ? "Following" : "Follow"}</button>` : ""}
-      <a href="https://globe.adsb.lol/?icao=${encodeURIComponent(a.hex)}" target="_blank" rel="noopener">Open on adsb.lol ↗</a>
-    </p>`;
+      <a href="https://globe.adsb.lol/?icao=${encodeURIComponent(a.hex)}" target="_blank" rel="noopener">View on adsb.lol ↗</a>
+    </div>`;
   detailEl.hidden = false;
   detailEl.querySelector(".close")!.addEventListener("click", () => select(null));
   const followBtn = detailEl.querySelector<HTMLButtonElement>(".follow");
