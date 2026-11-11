@@ -75,11 +75,11 @@ async function getJson<T>(url: string): Promise<T> {
 // ---------- Map ----------
 
 const map = L.map("map", { zoomControl: false, worldCopyJump: true, minZoom: 2 }).setView([35, 0], 3);
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-  subdomains: "abcd",
+// Standard OSM tiles, darkened in CSS (.basemap) to fit the console theme.
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 18,
-  attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  className: "basemap",
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
 map.attributionControl.addAttribution(
   'Positions <a href="https://adsb.lol">adsb.lol</a> (ODbL) · Aircraft data <a href="https://opensky-network.org">OpenSky Network</a>',

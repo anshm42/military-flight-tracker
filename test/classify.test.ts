@@ -68,7 +68,7 @@ test("toSightings keeps tracked aircraft with positions and normalizes fields", 
         { hex: "AE1234", dbFlags: 1, flight: "RCH123  ", lat: 1, lon: 2, alt_baro: 30000, seen_pos: 2.5 },
         { hex: "ae9999", dbFlags: 1 }, // no position
         { hex: "a11111", lat: 1, lon: 2 }, // civil
-        { hex: "a00001", dbFlags: 8, lat: 3, lon: 4, alt_baro: "ground" },
+        { hex: "a00001", dbFlags: 8, flight: "00000000", lat: 3, lon: 4, alt_baro: "ground" },
       ],
     },
     empty,
@@ -80,4 +80,6 @@ test("toSightings keeps tracked aircraft with positions and normalizes fields", 
   );
   assert.equal(sightings[1].onGround, true);
   assert.equal(sightings[1].alt, null);
+  assert.equal(sightings[1].callsign, undefined);
+  assert.equal(toSightings({ now: 0, ac: [{ hex: "a1", dbFlags: 1, flight: "@@@@@@@@", lat: 0, lon: 0 }] }, empty)[0].callsign, undefined);
 });

@@ -75,7 +75,8 @@ export function toSightings(snapshot: AdsbSnapshot, govIndex: GovIndex): Sightin
       ...cls,
       hex: ac.hex.toLowerCase(),
       ts: Math.round(snapshot.now - (ac.seen_pos ?? 0) * 1000),
-      callsign: ac.flight?.trim() || undefined,
+      // Some transponders broadcast placeholder callsigns like "00000000" or "@@@@@@@@".
+      callsign: ac.flight?.trim().replace(/^[0@]+$/, "") || undefined,
       reg: ac.r || undefined,
       type: ac.t || undefined,
       lat: ac.lat,

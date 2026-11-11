@@ -133,6 +133,7 @@ body::after {
   content: ""; position: absolute; inset: -9px; border: 1px solid currentColor; border-radius: 50%; animation: ping 1.6s ease-out infinite;
 }
 
+.basemap { filter: invert(1) hue-rotate(180deg) grayscale(0.85) brightness(0.55) contrast(1.15); }
 .leaflet-container { font-family: var(--label); background: var(--bg); }
 .leaflet-control-attribution { background: rgba(9, 12, 10, 0.8) !important; color: var(--muted); font: 11px var(--mono); }
 .leaflet-control-attribution a { color: var(--text); }
