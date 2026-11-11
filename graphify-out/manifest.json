@@ -18,15 +18,15 @@
     "semantic_hash": ""
   },
   "server/govRules.ts": {
-    "mtime": 1794352977.8443365,
-    "seen": 1794353153.292537,
-    "ast_hash": "d1a1dc3841efa326a587fde0cf53eeea",
-    "semantic_hash": "d1a1dc3841efa326a587fde0cf53eeea"
+    "mtime": 1794356559.180162,
+    "seen": 1794356665.799556,
+    "ast_hash": "6fdca9a16816eb759fdeeff5d71f5cf7",
+    "semantic_hash": ""
   },
   "test/classify.test.ts": {
-    "mtime": 1794355823.4496903,
-    "seen": 1794355880.1471958,
-    "ast_hash": "ad8bf3d9448a45c0b4c09f343743631e",
+    "mtime": 1794356559.180306,
+    "seen": 1794356665.7995589,
+    "ast_hash": "9fb933164533b7862f213153a5e6efb2",
     "semantic_hash": ""
   },
   "tsconfig.json": {
@@ -126,9 +126,9 @@
     "semantic_hash": "987e82f7cd232ffadbc9d59d286c222a"
   },
   "web/main.ts": {
-    "mtime": 1794356346.4052052,
-    "seen": 1794356362.03497,
-    "ast_hash": "2470f689af45cf9d5e0173e45c3b890e",
+    "mtime": 1794356652.329016,
+    "seen": 1794356665.799562,
+    "ast_hash": "e9f37e9cf450c969e8f7071ee62a39db",
     "semantic_hash": ""
   },
   "web/vite-env.d.ts": {
