@@ -12,10 +12,10 @@
     "semantic_hash": "b0aa5e2be7d2ef24b7fb4b798a5b6ba5"
   },
   "server/classify.ts": {
-    "mtime": 1794354450.605931,
-    "seen": 1794354729.9089322,
-    "ast_hash": "16e66839058188dcacd56345ea41a1b1",
-    "semantic_hash": "16e66839058188dcacd56345ea41a1b1"
+    "mtime": 1794355823.4495718,
+    "seen": 1794355880.147192,
+    "ast_hash": "059d3100471e767bb17095c19ba94b82",
+    "semantic_hash": ""
   },
   "server/govRules.ts": {
     "mtime": 1794352977.8443365,
@@ -24,10 +24,10 @@
     "semantic_hash": "d1a1dc3841efa326a587fde0cf53eeea"
   },
   "test/classify.test.ts": {
-    "mtime": 1794354450.6131682,
-    "seen": 1794354729.908937,
-    "ast_hash": "e9aaf94fcf5d916f90d3e06022cb36c1",
-    "semantic_hash": "e9aaf94fcf5d916f90d3e06022cb36c1"
+    "mtime": 1794355823.4496903,
+    "seen": 1794355880.1471958,
+    "ast_hash": "ad8bf3d9448a45c0b4c09f343743631e",
+    "semantic_hash": ""
   },
   "tsconfig.json": {
     "mtime": 1794352865.4543827,
@@ -90,10 +90,10 @@
     "semantic_hash": "b4cb47d466857773a7ddc648d6442720"
   },
   "server/index.ts": {
-    "mtime": 1794354561.839788,
-    "seen": 1794354729.9089339,
-    "ast_hash": "e647d5207da4cd0df2d27675df9051b2",
-    "semantic_hash": "e647d5207da4cd0df2d27675df9051b2"
+    "mtime": 1794355823.449785,
+    "seen": 1794355880.1471932,
+    "ast_hash": "2232df7c49bb3be4bef38612ecb17db2",
+    "semantic_hash": ""
   },
   "server/live.ts": {
     "mtime": 1794354552.2802343,
@@ -124,5 +124,23 @@
     "seen": 1794354729.908938,
     "ast_hash": "987e82f7cd232ffadbc9d59d286c222a",
     "semantic_hash": "987e82f7cd232ffadbc9d59d286c222a"
+  },
+  "web/main.ts": {
+    "mtime": 1794355794.6454332,
+    "seen": 1794355880.147199,
+    "ast_hash": "b32c4b1ad5c7f5ef022e791c3d772b32",
+    "semantic_hash": ""
+  },
+  "web/vite-env.d.ts": {
+    "mtime": 1794354826.8045058,
+    "seen": 1794355880.1472,
+    "ast_hash": "0352474ba2918efe13895edbc3780d94",
+    "semantic_hash": ""
+  },
+  "web/index.html": {
+    "mtime": 1794354716.9191408,
+    "seen": 1794355880.147203,
+    "ast_hash": "cd2be13f75037cddb3ee746853316e60",
+    "semantic_hash": ""
   }
 }
