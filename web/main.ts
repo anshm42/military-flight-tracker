@@ -32,6 +32,10 @@ const state = {
   enabled: new Set<Category>(CATEGORY_ORDER),
   search: "",
   selected: null as string | null,
+  /** Stored record of the selected aircraft, kept so live refreshes can redraw its details. */
+  selectedRecord: null as AircraftRecord | null,
+  /** Keep the map centred on the selected aircraft as it moves (live mode). */
+  follow: false,
   live: [] as LiveAircraft[],
   liveUpdated: 0,
   history: [] as SeenAircraft[],
@@ -85,6 +89,8 @@ map.attributionControl.addAttribution(
   'Positions <a href="https://adsb.lol">adsb.lol</a> (ODbL) · Aircraft data <a href="https://opensky-network.org">OpenSky Network</a>',
 );
 L.control.zoom({ position: "bottomright" }).addTo(map);
+
+map.on("dragstart", () => state.follow && setFollow(false));
 
 const canvas = L.canvas({ padding: 0.5 });
 const trailLayer = L.layerGroup().addTo(map);
@@ -210,6 +216,7 @@ function renderDetail(record: AircraftRecord | null, live: LiveAircraft | null):
   const a = live ?? record;
   if (!a) return;
   const cats = a.categories;
+  const refocusFollow = document.activeElement?.classList.contains("follow");
   detailEl.style.setProperty("--accent", COLORS[primary(cats)]);
   detailEl.innerHTML = `
     <button class="close" type="button" aria-label="Close details">×</button>
@@ -228,13 +235,32 @@ function renderDetail(record: AircraftRecord | null, live: LiveAircraft | null):
       ["First seen", record ? fmtTime(record.firstSeen) : null],
       ["Last seen", record ? fmtTime(record.lastSeen) : null],
     ])}</dl>
-    <p class="links"><a href="https://globe.adsb.lol/?icao=${encodeURIComponent(a.hex)}" target="_blank" rel="noopener">Open on adsb.lol ↗</a></p>`;
+    <p class="links">
+      ${live ? `<button class="follow" type="button" aria-pressed="${state.follow}">${state.follow ? "Following" : "Follow"}</button>` : ""}
+      <a href="https://globe.adsb.lol/?icao=${encodeURIComponent(a.hex)}" target="_blank" rel="noopener">Open on adsb.lol ↗</a>
+    </p>`;
   detailEl.hidden = false;
   detailEl.querySelector(".close")!.addEventListener("click", () => select(null));
+  const followBtn = detailEl.querySelector<HTMLButtonElement>(".follow");
+  followBtn?.addEventListener("click", () => setFollow(!state.follow));
+  if (refocusFollow) followBtn?.focus();
+}
+
+function setFollow(on: boolean): void {
+  state.follow = on;
+  const btn = detailEl.querySelector<HTMLButtonElement>(".follow");
+  if (btn) {
+    btn.setAttribute("aria-pressed", String(on));
+    btn.textContent = on ? "Following" : "Follow";
+  }
+  const live = state.selected ? state.live.find((a) => a.hex === state.selected) : undefined;
+  if (on && live) map.panTo([live.lat, live.lon]);
 }
 
 async function select(hex: string | null): Promise<void> {
   state.selected = hex;
+  state.selectedRecord = null;
+  setFollow(false);
   stopReplay();
   if (!hex) {
     detailEl.hidden = true;
@@ -250,6 +276,7 @@ async function select(hex: string | null): Promise<void> {
       `/api/aircraft/${encodeURIComponent(hex)}`,
     );
     if (state.selected !== hex) return;
+    state.selectedRecord = aircraft;
     renderDetail(aircraft, live);
     if (state.mode === "history") await loadTrack(hex);
     else if (live) map.panTo([live.lat, live.lon]);
@@ -287,6 +314,15 @@ async function refreshLive(): Promise<void> {
     state.liveUpdated = updated || Date.now();
     renderLive();
     renderStatus();
+    if (state.selected) {
+      const current = aircraft.find((a) => a.hex === state.selected) ?? null;
+      if (current) {
+        renderDetail(state.selectedRecord, current);
+        if (state.follow) map.panTo([current.lat, current.lon]);
+      } else if (state.follow) {
+        setFollow(false); // aircraft left coverage
+      }
+    }
   } catch (err) {
     statusEl.className = "stale";
     statusEl.textContent = `Feed error: ${(err as Error).message}`;
@@ -412,6 +448,8 @@ searchEl.addEventListener("input", () => {
 });
 
 document.addEventListener("keydown", (e) => {
+  const typing = e.target instanceof HTMLElement && e.target.matches("input, textarea");
+  if (!typing && e.key.toLowerCase() === "f" && state.mode === "live" && state.selected) setFollow(!state.follow);
   if (e.key === "Escape" && state.selected) select(null);
 });
 

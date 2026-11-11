@@ -113,7 +113,15 @@ body::after {
 #detail .close { position: absolute; top: 10px; right: 10px; background: none; border: 0; color: var(--muted); font-size: 22px; cursor: pointer; }
 #detail .close:hover { color: var(--text); }
 #detail a { color: var(--text); }
-#detail .links { margin-top: 12px; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
+#detail .links { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 0 0; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; }
+#detail .follow {
+  padding: 5px 12px; border: 1px solid var(--accent, var(--text)); background: none; color: var(--accent, var(--text)); cursor: pointer;
+  font: 700 14px var(--label); letter-spacing: 0.18em; text-transform: uppercase;
+}
+#detail .follow:hover { background: rgba(255, 255, 255, 0.06); }
+#detail .follow[aria-pressed="true"] { background: var(--accent, var(--text)); color: var(--bg); }
+#detail .follow[aria-pressed="true"]::before { content: "◉ "; animation: pulse 1.6s infinite; }
+#detail .follow:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 
 #replay {
   position: fixed; z-index: 1000; left: 372px; right: 352px; bottom: 16px; display: flex; align-items: center; gap: 12px;
