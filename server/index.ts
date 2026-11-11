@@ -21,15 +21,9 @@ mkdirSync(DATA_DIR, { recursive: true });
 const live = new LiveState();
 const history = new History(join(DATA_DIR, "tracker.sqlite"));
 
-// Until the database index loads, government aircraft are still caught by callsign.
+// Polling starts once the government index is ready, so early sightings aren't misclassified.
+// If it cannot load, government aircraft are still caught by callsign.
 let govIndex: GovIndex = new Map();
-loadGovIndex(DATA_DIR).then(
-  (index) => {
-    govIndex = index;
-    console.log(`government index loaded: ${index.size} aircraft`);
-  },
-  (err) => console.error(`government index unavailable, using callsign rules only: ${err}`),
-);
 
 let pollTimer: NodeJS.Timeout;
 async function poll(delay = POLL_MS): Promise<void> {
@@ -46,7 +40,15 @@ async function poll(delay = POLL_MS): Promise<void> {
   }
   pollTimer = setTimeout(() => poll(next), next);
 }
-poll();
+loadGovIndex(DATA_DIR)
+  .then(
+    (index) => {
+      govIndex = index;
+      console.log(`government index loaded: ${index.size} aircraft`);
+    },
+    (err) => console.error(`government index unavailable, using callsign rules only: ${err}`),
+  )
+  .then(() => poll());
 
 const pruneTimer = setInterval(() => history.prune(Date.now() - RETENTION_MS), 3600_000);
 
