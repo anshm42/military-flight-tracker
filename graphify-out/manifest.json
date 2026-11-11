@@ -66,9 +66,9 @@
     "semantic_hash": "9918a4051db590bde5644c39db5194f4"
   },
   "spec.md": {
-    "mtime": 1794357573.7953558,
-    "seen": 1794357587.0676029,
-    "ast_hash": "982edcb17b55b6c069e88f9728a98ea7",
+    "mtime": 1794359935.8880858,
+    "seen": 1794359937.875721,
+    "ast_hash": "529dae0f98109848cf651555a3c16a0d",
     "semantic_hash": ""
   },
   "server/aircraftDb.ts": {
@@ -126,9 +126,9 @@
     "semantic_hash": "987e82f7cd232ffadbc9d59d286c222a"
   },
   "web/main.ts": {
-    "mtime": 1794357518.338653,
-    "seen": 1794357587.0675998,
-    "ast_hash": "09836d397e150894b82565028386d8f3",
+    "mtime": 1794359885.9133236,
+    "seen": 1794359937.8757179,
+    "ast_hash": "494c8698db080a031d3ca7a8b6305f1f",
     "semantic_hash": ""
   },
   "web/vite-env.d.ts": {
@@ -138,9 +138,21 @@
     "semantic_hash": ""
   },
   "web/index.html": {
-    "mtime": 1794357290.4940224,
-    "seen": 1794357587.0676029,
-    "ast_hash": "02f84e5d5b30f38fa36af069ff27b347",
+    "mtime": 1794359885.913598,
+    "seen": 1794359937.875722,
+    "ast_hash": "aa47fe456f8802b2facaf1dc39483485",
+    "semantic_hash": ""
+  },
+  "server/icao.ts": {
+    "mtime": 1794359854.9684818,
+    "seen": 1794359937.875712,
+    "ast_hash": "c99caf6e741374536e670b1d42bf7fa1",
+    "semantic_hash": ""
+  },
+  "test/icao.test.ts": {
+    "mtime": 1794359866.8824,
+    "seen": 1794359937.8757162,
+    "ast_hash": "35ac905de1403fcdb036d31e3ee68abe",
     "semantic_hash": ""
   }
 }
