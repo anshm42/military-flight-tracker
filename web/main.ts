@@ -4,6 +4,7 @@ import "./style.css";
 import type { Category } from "../server/classify.ts";
 import type { AircraftRecord, Position, SeenAircraft } from "../server/history.ts";
 import type { LiveAircraft } from "../server/live.ts";
+import { ORIGINS, countryOfHex, originOfHex, type Origin } from "../server/icao.ts";
 
 const LIVE_REFRESH_MS = 5_000;
 const LIST_LIMIT = 300;
@@ -30,6 +31,7 @@ interface ListItem {
 const state = {
   mode: "live" as Mode,
   enabled: new Set<Category>(CATEGORY_ORDER),
+  origins: new Set<Origin>(ORIGINS),
   search: "",
   selected: null as string | null,
   /** Stored record of the selected aircraft, kept so live refreshes can redraw its details. */
@@ -67,7 +69,9 @@ const fmtTime = (ms: number) =>
 
 const matchesSearch = (a: ListItem) =>
   !state.search || [a.hex, a.callsign, a.reg].some((v) => v?.toLowerCase().includes(state.search));
-const visible = (a: ListItem) => a.categories.some((c) => state.enabled.has(c)) && matchesSearch(a);
+const inCategories = (a: ListItem) => a.categories.some((c) => state.enabled.has(c));
+const inOrigins = (a: ListItem) => state.origins.has(originOfHex(a.hex));
+const visible = (a: ListItem) => inCategories(a) && inOrigins(a) && matchesSearch(a);
 
 async function getJson<T>(url: string): Promise<T> {
   const res = await fetch(url);
@@ -126,11 +130,13 @@ function clearMap(): void {
 
 // ---------- Rendering ----------
 
+/** Counts per category (within the enabled origins) and per origin (within the enabled categories). */
 function renderCounts(items: ListItem[]): void {
-  for (const c of CATEGORY_ORDER) {
-    const n = items.filter((a) => a.categories.includes(c)).length;
-    document.querySelector(`[data-count="${c}"]`)!.textContent = String(n);
-  }
+  const setCount = (key: string, n: number) => (document.querySelector(`[data-count="${key}"]`)!.textContent = String(n));
+  const byOrigin = items.filter(inOrigins);
+  for (const c of CATEGORY_ORDER) setCount(c, byOrigin.filter((a) => a.categories.includes(c)).length);
+  const byCategory = items.filter(inCategories);
+  for (const o of ORIGINS) setCount(o, byCategory.filter((a) => originOfHex(a.hex) === o).length);
 }
 
 function renderList(items: ListItem[]): void {
@@ -168,11 +174,10 @@ function renderLive(): void {
   trailLayer.clearLayers();
   for (const a of shown) {
     placeMarker(a.hex, [a.lat, a.lon], a.categories, label(a), a.track);
-    if (a.trail.length > 1) {
-      const selected = a.hex === state.selected;
+    if (a.hex === state.selected && a.trail.length > 1) {
       L.polyline(
         a.trail.map((p) => [p.lat, p.lon] as L.LatLngTuple),
-        { renderer: canvas, color: COLORS[primary(a.categories)], weight: selected ? 2.5 : 1, opacity: selected ? 0.9 : 0.3, interactive: false },
+        { renderer: canvas, color: COLORS[primary(a.categories)], weight: 2.5, opacity: 0.9, interactive: false },
       ).addTo(trailLayer);
     }
   }
@@ -238,7 +243,7 @@ function renderDetail(record: AircraftRecord | null, live: LiveAircraft | null):
     ${detailSection("Identity", [
       ["ICAO hex", a.hex.toUpperCase()],
       ["Registration", a.reg],
-      ["Country", a.country, "text"],
+      ["Country", a.country ?? countryOfHex(a.hex), "text"],
       ["Operator", a.operator, "text"],
       ["Listed as gov", a.govReason, "text"],
     ])}
@@ -445,7 +450,15 @@ for (const tab of document.querySelectorAll<HTMLButtonElement>("[data-mode]")) {
   tab.addEventListener("click", () => setMode(tab.dataset.mode as Mode));
 }
 
-for (const box of document.querySelectorAll<HTMLInputElement>(".cats input")) {
+for (const box of document.querySelectorAll<HTMLInputElement>(".origins input")) {
+  box.addEventListener("change", () => {
+    if (box.checked) state.origins.add(box.value as Origin);
+    else state.origins.delete(box.value as Origin);
+    render();
+  });
+}
+
+for (const box of document.querySelectorAll<HTMLInputElement>(".cats:not(.origins) input")) {
   box.addEventListener("change", () => {
     if (box.checked) state.enabled.add(box.value as Category);
     else state.enabled.delete(box.value as Category);

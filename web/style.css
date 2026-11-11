@@ -75,6 +75,7 @@ html, body {
 .cat input:focus-visible + .check { outline: 2px solid var(--focus); outline-offset: 2px; }
 .cat b { margin-left: auto; font: 500 12.5px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 .cat:has(input:not(:checked)) { color: var(--faint); }
+.origins .cat { --c: var(--muted); }
 .cat.mil { --c: var(--mil); } .cat.gov { --c: var(--gov); } .cat.ladd { --c: var(--ladd); }
 
 .history-form { display: grid; gap: 10px; }

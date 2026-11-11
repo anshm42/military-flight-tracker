@@ -122,8 +122,9 @@ Leaflet map with OpenStreetMap tiles.
 
 - Plane icons rotated by track and colored by category (mil / gov / ladd).
 - Category filter toggles; search by hex, registration or callsign.
+- Origin filter: United States / other NATO / non-NATO, from the country whose ICAO address block contains the hex (`server/icao.ts`, ICAO Annex 10 allocations). Non-ICAO (`~`) and unallocated addresses count as non-NATO.
 - Sidebar list of visible aircraft; clicking an aircraft (list or map) opens a details panel: registration, type, callsign, altitude, speed, categories, government reason/operator.
-- **Live mode**: refresh from `/api/live` every 5 s; draw trails.
+- **Live mode**: refresh from `/api/live` every 5 s; draw the 30-minute trail of the selected aircraft only.
 - **History mode**: pick a date range → list from `/api/history`; select an aircraft → draw its stored track with a time slider to replay it.
 - Attribution: adsb.lol (ODbL), OpenSky Network, OpenStreetMap.
 
