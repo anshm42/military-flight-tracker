@@ -1,17 +1,17 @@
 # Graph Report - military-flight-tracker  (2026-11-10)
 
 ## Corpus Check
-- 23 files · ~8,462 words
+- 23 files · ~8,604 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 2 file(s) not represented in the graph (top: (none) 1, .css 1)
 
 ## Summary
-- 259 nodes · 462 edges · 8 communities (7 shown, 1 thin omitted)
+- 259 nodes · 465 edges · 8 communities (7 shown, 1 thin omitted)
 - Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 24 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `01a3edf7`
+- Built from commit: `c2fe0cc5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -30,11 +30,11 @@
 3. `compilerOptions` - 12 edges
 4. `Agent skills configuration` - 12 edges
 5. `Sighting` - 10 edges
-6. `History Store (SQLite)` - 10 edges
-7. `Classifier` - 10 edges
-8. `Category` - 9 edges
-9. `LiveState` - 9 edges
-10. `renderLive()` - 9 edges
+6. `renderLive()` - 10 edges
+7. `History Store (SQLite)` - 10 edges
+8. `Classifier` - 10 edges
+9. `Category` - 9 edges
+10. `LiveState` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `ListItem` --references--> `Category`  [EXTRACTED]

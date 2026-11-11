@@ -126,9 +126,9 @@
     "semantic_hash": "987e82f7cd232ffadbc9d59d286c222a"
   },
   "web/main.ts": {
-    "mtime": 1794355794.6454332,
-    "seen": 1794355880.147199,
-    "ast_hash": "b32c4b1ad5c7f5ef022e791c3d772b32",
+    "mtime": 1794356346.4052052,
+    "seen": 1794356362.03497,
+    "ast_hash": "2470f689af45cf9d5e0173e45c3b890e",
     "semantic_hash": ""
   },
   "web/vite-env.d.ts": {
@@ -138,9 +138,9 @@
     "semantic_hash": ""
   },
   "web/index.html": {
-    "mtime": 1794354716.9191408,
-    "seen": 1794355880.147203,
-    "ast_hash": "cd2be13f75037cddb3ee746853316e60",
+    "mtime": 1794356346.4053192,
+    "seen": 1794356362.0349739,
+    "ast_hash": "2420886773610ee302e8c4207bed8d16",
     "semantic_hash": ""
   }
 }
