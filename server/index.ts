@@ -13,7 +13,7 @@ import { LiveState } from "./live.ts";
 const PORT = Number(process.env.PORT ?? 3000);
 const DATA_DIR = "data";
 const DIST_DIR = "dist";
-const POLL_MS = 20_000;
+const POLL_MS = 10_000;
 const MAX_BACKOFF_MS = 5 * 60_000;
 const RETENTION_MS = 30 * 24 * 3600 * 1000;
 

@@ -36,7 +36,8 @@ Downloaded once into `data/`, re-downloaded when older than 30 days.
 
 ## Polling
 
-- One global adsb.lol request every 20 s.
+- One global adsb.lol request every 10 s.
+- adsb.lol rate-limits per request, not per byte (measured Nov 2026: burst of ~9, then ~8 requests/min per IP). Splitting into `/v2/mil` + `/v2/ladd` + hex lookups costs 3+ requests per refresh, so a single global request is the fastest option.
 - Request timeout; on 429 / 5xx / network error, exponential backoff (cap 5 min), then resume normal interval after a success.
 - Only aircraft with a position (`lat`/`lon`) and at least one category are kept.
 
@@ -122,7 +123,7 @@ Leaflet map with OpenStreetMap tiles.
 - Plane icons rotated by track and colored by category (mil / gov / ladd).
 - Category filter toggles; search by hex, registration or callsign.
 - Sidebar list of visible aircraft; clicking an aircraft (list or map) opens a details panel: registration, type, callsign, altitude, speed, categories, government reason/operator.
-- **Live mode**: refresh from `/api/live` every 10 s; draw trails.
+- **Live mode**: refresh from `/api/live` every 5 s; draw trails.
 - **History mode**: pick a date range → list from `/api/history`; select an aircraft → draw its stored track with a time slider to replay it.
 - Attribution: adsb.lol (ODbL), OpenSky Network, OpenStreetMap.
 
